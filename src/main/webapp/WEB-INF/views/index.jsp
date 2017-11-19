@@ -3,10 +3,9 @@
 
 <html>
 	<head>
-		
 		<link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/style.css"/>"/>
-		
-		
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="<c:url value="/resources/js/script.js" />"></script>
 	</head>
 <body>
 	<div class="wrapper">
@@ -21,7 +20,7 @@
 							</tr>
 							<c:forEach items="${userCoins}" var="coin">
 								<tr>
-									<td>${coin.key}</td> <td>${coin.value}</td> <td>+</td>
+									<td>${coin.key.value}</td> <td>${coin.value}</td> <td>Внести</td>
 								</tr>
 							</c:forEach>
 						</table>
@@ -35,7 +34,7 @@
 							
 							<c:forEach items="${vmCoins}" var="coin">
 								<tr>
-									<td>${coin.key}</td> <td>${coin.value}</td>
+									<td>${coin.key.value}</td> <td>${coin.value}</td>
 								</tr>
 							</c:forEach>
 						</table>

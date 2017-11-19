@@ -22,6 +22,10 @@
 	margin-right: 60px;
 }
 
+.wallet-user tr td:last-child {
+	cursor: pointer;
+}
+
 .product-list {
 	border: 1px solid black;
 }

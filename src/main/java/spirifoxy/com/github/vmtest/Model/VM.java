@@ -3,7 +3,9 @@ package spirifoxy.com.github.vmtest.Model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VM {
+import spirifoxy.com.github.vmtest.Model.interfaces.HasMoney;
+
+public class VM implements HasMoney {
 	
 	private Wallet wallet;
 	private List<Product> products;
@@ -42,4 +44,20 @@ public class VM {
 	public int getCurrentPaidAmount() {
 		return currentPaidAmount;
 	}
+
+	@Override
+	public void addCoin(int denom) {
+		wallet.addCoin(denom);
+	}
+
+	@Override
+	public void spendCoin(int denom) {
+		wallet.spendCoin(denom);
+	}
+	
+	@Override
+	public int getCoinsAmount(int denom) {
+		return wallet.getCoinsAmount(denom);
+	}
+	
 }
