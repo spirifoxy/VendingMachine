@@ -1,19 +1,21 @@
 package spirifoxy.com.github.vmtest.Model;
 
+import spirifoxy.com.github.vmtest.Model.Wallet.Coin;
+
 public class User {
 	private Wallet wallet;
 	
-	User() {
+	public User() {
 		wallet = new Wallet();
 		
 		initializeWallet();
 	}
 	
 	private void initializeWallet() {
-		wallet.getCoins().put(Wallet.Coin.ONE, 10);
-		wallet.getCoins().put(Wallet.Coin.TWO, 30);
-		wallet.getCoins().put(Wallet.Coin.FIVE, 20);
-		wallet.getCoins().put(Wallet.Coin.TEN, 15);
+		wallet.setCoins(Coin.ONE, 10);
+		wallet.setCoins(Coin.TWO, 30);
+		wallet.setCoins(Coin.FIVE, 20);
+		wallet.setCoins(Coin.TEN, 15);
 	}
 
 	public Wallet getWallet() {

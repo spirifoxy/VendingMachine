@@ -4,10 +4,6 @@
 <html>
 	<head>
 		
-		
-		<%-- <spring:url value="/resources/css/style.css" var="mainCss" />
-		<link rel="stylesheet" type="text/css" href="${mainCss}"> --%>
-		
 		<link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/style.css"/>"/>
 		
 		
@@ -23,18 +19,11 @@
 							<tr>
 								<th>Номинал</th> <th>Кол-во</th> <th></th>
 							</tr>
-							<tr>
-								<td>10</td> <td>15</td> <td>+</td>
-							</tr>
-							<tr>
-								<td>5</td> <td>20</td> <td>+</td>
-							</tr>
-							<tr>
-								<td>2</td> <td>30</td> <td>+</td>
-							</tr>
-							<tr>
-								<td>1</td> <td>10</td> <td>+</td>
-							</tr>
+							<c:forEach items="${userCoins}" var="coin">
+								<tr>
+									<td>${coin.key}</td> <td>${coin.value}</td> <td>+</td>
+								</tr>
+							</c:forEach>
 						</table>
 					</div>
 					<div class="wallet-vm">
@@ -43,54 +32,45 @@
 							<tr>
 								<th>Номинал</th> <th>Кол-во</th>
 							</tr>
-							<tr>
-								<td>10</td> <td>100</td>
-							</tr>
-							<tr>
-								<td>5</td> <td>100</td>
-							</tr>
-							<tr>
-								<td>2</td> <td>100</td>
-							</tr>
-							<tr>
-								<td>1</td> <td>100</td>
-							</tr>
+							
+							<c:forEach items="${vmCoins}" var="coin">
+								<tr>
+									<td>${coin.key}</td> <td>${coin.value}</td>
+								</tr>
+							</c:forEach>
 						</table>
 					</div>
 				</div>
 				
 				<div class="result-panel">
-					Внесенная сумма: <span class="total"> 987 р.</span> <button type="button">Сдача</button>
+					Внесенная сумма: <span class="total"> ${currentPaidAmount} р.</span> <button type="button">Сдача</button>
 				</div>
 			</div>
 			
 			<div class="products">
 				Товары
 				<div class="product-list">
-					<div class="row">
-						<div class="product">
-							<p>Чай</p>
-							<p>13 р.</p>
-							<p>10 шт.</p>
-						</div>
-						<div class="product">
-							<p>Кофе</p>
-							<p>18 р.</p>
-							<p>20 шт.</p>
-						</div>
-						<div class="product">
-							<p>Кофе с молоком</p>
-							<p>21 р.</p>
-							<p>20 шт.</p>
-						</div>
-					</div>
-					<div class="row">
-						<div class="product">
-							<p>Сок</p>
-							<p>35 р.</p>
-							<p>15 шт.</p>
-						</div>
-					</div>
+					<c:forEach items="${products}" var="product" varStatus="loop">
+						
+						<c:if test="${loop.index % 3 == 0}">
+							<c:if test="${!loop.last}">
+							
+							</c:if>
+							
+							<div class="row">
+						</c:if>
+					    
+					    	<div class="product">
+								<p>${product.name}</p>
+								<p>${product.price} р.</p>
+								<p>${product.amount} шт.</p>
+							</div>
+					    
+					    <c:if test="${(loop.index + 1) % 3 == 0}">
+							</div>
+						</c:if>
+						
+					</c:forEach>
 				</div>
 			</div>
 		</div>

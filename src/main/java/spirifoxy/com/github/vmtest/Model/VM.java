@@ -9,7 +9,7 @@ public class VM {
 	private List<Product> products;
 	private int currentPaidAmount;
 	
-	VM() {
+	public VM() {
 		wallet = new Wallet();
 		products = new ArrayList<Product>();
 		
@@ -25,17 +25,21 @@ public class VM {
 	}
 	
 	private void initializeWallet() {
-		wallet.getCoins().put(Wallet.Coin.ONE, 100);
-		wallet.getCoins().put(Wallet.Coin.TWO, 100);
-		wallet.getCoins().put(Wallet.Coin.FIVE, 100);
-		wallet.getCoins().put(Wallet.Coin.TEN, 100);
+		wallet.setCoins(Wallet.Coin.ONE, 100);
+		wallet.setCoins(Wallet.Coin.TWO, 100);
+		wallet.setCoins(Wallet.Coin.FIVE, 100);
+		wallet.setCoins(Wallet.Coin.TEN, 100);
 	}
 	
 	public Wallet getWallet() {
 		return wallet;
 	}
 	
-	public List getProducts() {
+	public List<Product> getProducts() {
 		return products;
+	}
+	
+	public int getCurrentPaidAmount() {
+		return currentPaidAmount;
 	}
 }

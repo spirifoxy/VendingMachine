@@ -1,11 +1,11 @@
 package spirifoxy.com.github.vmtest.Model;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Wallet {
 
-	enum Coin {
+	public enum Coin {
 		ONE(1), TWO(2), FIVE(5), TEN(10);
 		
 		private final int value;
@@ -14,28 +14,28 @@ public class Wallet {
 			this.value = value;
 		}
 		
-		int value() {
+		public int value() {
 			return value;
 		}
 		
 	}
 	
-	private Map<Coin, Integer> coins;
+	private Map<Integer, Integer> coins;
 	
-	Wallet() {
-		setCoins(new HashMap<Coin, Integer>());
-	}
-
-	private void setCoins(Map<Coin, Integer> coins) {
-		this.coins = coins;
+	public Wallet() {
+		this.coins = new LinkedHashMap<Integer, Integer>();
 	}
 	
-	public Map<Coin, Integer> getCoins() {
+	public Map<Integer, Integer> getCoins() {
 		return coins;
 	}
 
+	public void setCoins(Coin coin, int amount) {
+		coins.put(coin.value(), amount);
+	}
+	
 	public void addCoin(Coin coin) {
-		coins.put(coin, coins.get(coin) + 1);
+		coins.put(coin.value(), coins.get(coin.value()) + 1);
 	}
 	
 	

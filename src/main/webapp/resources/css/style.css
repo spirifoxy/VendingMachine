@@ -19,7 +19,7 @@
 }
 
 .wallet-user, .wallet-vm {
-    margin-right: 60px;
+	margin-right: 60px;
 }
 
 .product-list {
@@ -31,8 +31,8 @@
 }
 
 .product {
-    height: 100px;
-    width: 100px;
+	height: 100px;
+	width: 100px;
 	margin: 5px;
 	background-color: lightgray;
 }
