@@ -1,0 +1,55 @@
+.wrapper {
+	display: flex;
+	flex-wrap: wrap;
+	text-align: center;
+	justify-content: center;
+}
+
+.content {
+	display: flex;
+	margin: 5px;
+	padding: 15px;
+}
+
+.wallets {
+	display: flex;
+	justify-content: center;
+	margin: 20px 0;
+	/* justify-content: space-between; */
+}
+
+.wallet-user, .wallet-vm {
+    margin-right: 60px;
+}
+
+.product-list {
+	border: 1px solid black;
+}
+
+.product-list .row {
+	display: flex;
+}
+
+.product {
+    height: 100px;
+    width: 100px;
+	margin: 5px;
+	background-color: lightgray;
+}
+
+.product p {
+	margin: 0;
+	padding: 0;
+}
+
+.product p:first-child {
+	height: 40px;
+}
+
+.wallets table {
+	border-collapse: collapse;
+}
+
+.wallets td, .wallets th {
+	border: 1px solid black;
+}
