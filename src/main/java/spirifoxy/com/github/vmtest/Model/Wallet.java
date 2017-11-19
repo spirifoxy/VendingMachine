@@ -31,18 +31,22 @@ public class Wallet {
 	
 	private Map<Coin, Integer> coins;
 	
-	private void addCoin(Coin coin) {
-		coins.put(coin, coins.get(coin) + 1);
+	public void addCoin(Coin coin) {
+		addCoins(coin, 1);
 	}
 	
-	private void spendCoin(Coin coin) {
+	public void addCoins(Coin coin, int amount) {
+		coins.put(coin, coins.get(coin) + amount);
+	}
+	
+	public void spendCoin(Coin coin) {
 		if (getCoinsAmount(coin) == 0) {
 			throw new IllegalArgumentException("There are no coins of denomination " + coin.getValue() + " in the wallet");
 		}
 		coins.put(coin, coins.get(coin) - 1);
 	}
 	
-	private int getCoinsAmount(Coin coin) {
+	public int getCoinsAmount(Coin coin) {
 		return coins.get(coin);
 	}
 	
@@ -68,8 +72,9 @@ public class Wallet {
 		spendCoin(coin);
 	}
 	
-	public int getCoinsAmount(int denom) {
+	public Integer getCoinsAmount(int denom) {
 		Coin coin = Coin.fromValue(denom);
 		return getCoinsAmount(coin);
 	}
+	
 }

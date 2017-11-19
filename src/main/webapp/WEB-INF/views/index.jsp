@@ -42,7 +42,7 @@
 				</div>
 				
 				<div class="result-panel">
-					Внесенная сумма: <span class="total"> ${currentPaidAmount} р.</span> <button type="button">Сдача</button>
+					Внесенная сумма: <span class="total"> ${currentPaidAmount}</span>р.  <button type="button">Сдача</button>
 				</div>
 			</div>
 			

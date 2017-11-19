@@ -1,5 +1,7 @@
 package spirifoxy.com.github.vmtest.Model;
 
+import java.util.Map;
+
 import spirifoxy.com.github.vmtest.Model.Wallet.Coin;
 import spirifoxy.com.github.vmtest.Model.interfaces.HasMoney;
 
@@ -23,6 +25,13 @@ public class User implements HasMoney {
 		return wallet;
 	}
 
+	public void getChange(Map<Wallet.Coin, Integer> change) {
+		for(Map.Entry<Wallet.Coin, Integer> coin : change.entrySet()) {
+		    
+		    wallet.addCoins(coin.getKey(), coin.getValue());
+		}
+	}
+	
 	@Override
 	public void addCoin(int denom) {
 		wallet.addCoin(denom);

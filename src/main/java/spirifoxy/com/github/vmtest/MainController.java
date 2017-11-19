@@ -1,5 +1,7 @@
 package spirifoxy.com.github.vmtest;
 
+import java.util.Map;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import spirifoxy.com.github.vmtest.Model.Server;
 import spirifoxy.com.github.vmtest.Model.User;
+import spirifoxy.com.github.vmtest.Model.VM;
 import spirifoxy.com.github.vmtest.Model.Wallet;
 
 
@@ -34,7 +37,7 @@ public class MainController {
 		
 		mav.addObject("products", server.getVM().getProducts());
 		mav.addObject("vmCoins", server.getVM().getWallet().getCoins());
-		mav.addObject("currentPaidAmount", server.getVM().getCurrentPaidAmount());
+		mav.addObject("currentPaidAmount", server.getVM().getCurrentPaidSum());
 		
 		return mav;
 	}
@@ -43,7 +46,7 @@ public class MainController {
 	public @ResponseBody String spendCoin(@ModelAttribute("user") User user, 
 			@RequestParam(value = "denom", required = true)Integer denom){
 		
-		Server server = Server.getInstance();
+		VM vm = Server.getInstance().getVM();
 		
 		try {
 			user.spendCoin(denom);
@@ -51,8 +54,23 @@ public class MainController {
 			return "{ \"error\": \"" + e.getMessage() + "\"}";
 		}
 		
-		server.getVM().addCoin(denom);
+		vm.addCoin(denom);
 		
-		return "{\"userCoins\": " + user.getCoinsAmount(denom) + " ,\"vmCoins\": " + server.getVM().getCoinsAmount(denom) + "}";
+		return "{\"userCoins\": " + user.getCoinsAmount(denom)
+			+ " ,\"currentPaid\": " + vm.getCurrentPaidSum()
+			+ "}";
     }
+	
+	@RequestMapping(value = "/getChange", method = RequestMethod.POST)
+	public @ResponseBody String getChange(@ModelAttribute("user") User user, 
+			@RequestParam(value = "amount", required = true)Integer amount){
+		
+		VM vm = Server.getInstance().getVM();
+
+		 Map<Wallet.Coin, Integer> change = vm.giveChange(amount);
+		 user.getChange(change);
+		
+		 return "OK";
+    }
+	
 }
