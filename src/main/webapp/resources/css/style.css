@@ -39,6 +39,7 @@
 	width: 100px;
 	margin: 5px;
 	background-color: lightgray;
+	cursor: pointer;
 }
 
 .product p {

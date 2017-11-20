@@ -27,22 +27,45 @@ $(function() {
 	
 	$(".result-panel button").click(function(){
 	    var $this = $(this);
-	    var $total = $(".result-panel .total");
-		var amount = $total.html();
 	    
 	    $.post(window.location.pathname + "getChange",
 	    {
-	    	amount: amount
 	    },
 	    function(data, status){
 	    	
-	        if (data === "OK") {
+	    	data = $.parseJSON(data);
+	    	
+	        if (data.message === "OK") {
 	        	
 	        	location.reload();
 	        	
 	        } else {
 	        	
 	        	alert("Error: unknown");
+	        	
+	        }
+	    });
+	});
+	
+	$(".product-list .product").click(function(){
+	    var $this = $(this);
+	    var name = $this.find('.name').html();
+		
+	    $.post(window.location.pathname + "buyProduct",
+	    {
+	    	productName: name
+	    },
+	    function(data, status){
+	    	
+	    	data = $.parseJSON(data);
+	    	
+	        if (data.message) {
+	        	alert(data.message);
+	        	location.reload();
+	        	
+	        } else {
+	        	
+	        	alert("Error: " + data.error );
 	        	
 	        }
 	    });

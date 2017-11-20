@@ -1,9 +1,8 @@
 package spirifoxy.com.github.vmtest.Model;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import spirifoxy.com.github.vmtest.Model.interfaces.HasMoney;
 
@@ -11,23 +10,25 @@ public class VM implements HasMoney {
 	
 	private Wallet wallet;
 	private Wallet coinAcceptorWallet;
-	private List<Product> products;
+	private Map<Product, Integer> products;
+	
+	private int currentPaidSum;
 	
 	public VM() {
 		wallet = new Wallet();
 		coinAcceptorWallet = new Wallet();
 		
-		products = new ArrayList<Product>();
+		products = new HashMap<Product, Integer>();
 		
 		initializeProducts();
 		initializeWallets();
 	}
 	
 	private void initializeProducts() {
-		products.add(new Product("Чай", 13, 10));
-		products.add(new Product("Кофе", 18, 20));
-		products.add(new Product("Кофе с молоком", 21, 20));
-		products.add(new Product("Сок", 35, 15));
+		products.put(new Product("Чай", 13), 10);
+		products.put(new Product("Кофе", 18), 20);
+		products.put(new Product("Кофе с молоком", 21), 20);
+		products.put(new Product("Сок", 35), 15);
 	}
 	
 	private void initializeWallets() {
@@ -46,19 +47,22 @@ public class VM implements HasMoney {
 		return wallet;
 	}
 	
-	public List<Product> getProducts() {
+	public Map<Product, Integer> getProducts() {
 		return products;
 	}
 	
+	public Product getProduct(String name) {
+		Set<Product> keys = getProducts().keySet();
+        for(Product key: keys){
+            if (name.equals(key.getName())) {
+            	return key;
+            }
+        }
+        return null;
+	}
+	
 	public int getCurrentPaidSum() {
-		int sum = 0;
-		for(Map.Entry<Wallet.Coin, Integer> coin : coinAcceptorWallet.getCoins().entrySet()) {
-		    Wallet.Coin c = coin.getKey();
-		    int amount = coin.getValue();
-		    
-		    sum += c.getValue() * amount;
-		}
-		return sum;
+		return currentPaidSum;
 	}
 	
 	public Map<Wallet.Coin, Integer> giveChange(int sum) {
@@ -100,11 +104,57 @@ public class VM implements HasMoney {
 		    wallet.addCoins(coin.getKey(), coin.getValue());
 		    coinAcceptorWallet.setCoins(coin.getKey(), 0);
 		}
+		currentPaidSum = 0;
+	}
+	
+	public void sellProduct(String productName) {
+		
+		Product product = getProduct(productName);
+		Integer amount = getProducts().get(product);
+		
+		if (amount == null || amount == 0) {
+			throw new IllegalArgumentException("Product is not available");
+		}
+		
+		if (getCurrentPaidSum() < product.getPrice()) {
+			throw new IllegalArgumentException("Insufficient funds");
+		}
+		
+		
+		int sum = 0;
+		
+		for(Map.Entry<Wallet.Coin, Integer> coin : coinAcceptorWallet.getCoins().entrySet()) { //normal order - take coins with less denomination first
+		    
+			int denom = coin.getKey().getValue();
+			int coinsAmount = coin.getValue();
+			
+			if (coinsAmount == 0) {
+				continue;
+			}
+			
+			for (int i = 0; i < coinsAmount; i++ ) {
+				if (sum >= product.getPrice()) {
+					break;
+				}
+				sum += denom;
+				spendCoin(denom);
+				wallet.addCoin(denom);
+			}
+			
+			if (sum >= product.getPrice()) {
+				break;
+			}
+		}
+		
+		products.put(product, products.get(product) - 1);
+		currentPaidSum -= product.getPrice();
+		
 	}
 	
 	@Override
 	public void addCoin(int denom) {
 		coinAcceptorWallet.addCoin(denom);
+		currentPaidSum += denom;
 	}
 
 	@Override

@@ -52,17 +52,13 @@
 					<c:forEach items="${products}" var="product" varStatus="loop">
 						
 						<c:if test="${loop.index % 3 == 0}">
-							<c:if test="${!loop.last}">
-							
-							</c:if>
-							
 							<div class="row">
 						</c:if>
 					    
 					    	<div class="product">
-								<p>${product.name}</p>
-								<p>${product.price} р.</p>
-								<p>${product.amount} шт.</p>
+								<p class="name">${product.key.name}</p>
+								<p>${product.key.price} р.</p>
+								<p>${product.value} шт.</p>
 							</div>
 					    
 					    <c:if test="${(loop.index + 1) % 3 == 0}">

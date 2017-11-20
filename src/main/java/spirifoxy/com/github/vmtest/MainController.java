@@ -62,15 +62,30 @@ public class MainController {
     }
 	
 	@RequestMapping(value = "/getChange", method = RequestMethod.POST)
-	public @ResponseBody String getChange(@ModelAttribute("user") User user, 
-			@RequestParam(value = "amount", required = true)Integer amount){
+	public @ResponseBody String getChange(@ModelAttribute("user") User user){
 		
 		VM vm = Server.getInstance().getVM();
 
-		 Map<Wallet.Coin, Integer> change = vm.giveChange(amount);
-		 user.getChange(change);
+		Map<Wallet.Coin, Integer> change = vm.giveChange(vm.getCurrentPaidSum());
+		user.getChange(change);
 		
-		 return "OK";
+		return "{ \"message\": \"OK\"}";
+    }
+	
+	@RequestMapping(value = "/buyProduct", method = RequestMethod.POST)
+	public @ResponseBody String buyProduct(@ModelAttribute("user") User user, 
+			@RequestParam(value = "productName", required = true)String productName){
+		
+		VM vm = Server.getInstance().getVM();
+
+		try {
+			vm.sellProduct(productName);
+			
+		} catch (Exception e) {
+			return "{ \"error\": \"" + e.getMessage() + "\"}";
+		}
+		
+		return "{ \"message\": \"Thanks!\"}";
     }
 	
 }
