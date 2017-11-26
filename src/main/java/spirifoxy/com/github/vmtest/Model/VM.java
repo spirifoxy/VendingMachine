@@ -53,56 +53,87 @@ public class VM implements HasMoney {
 	
 	public Product getProduct(String name) {
 		Set<Product> keys = getProducts().keySet();
-        for(Product key: keys){
-            if (name.equals(key.getName())) {
-            	return key;
-            }
-        }
-        return null;
+		for (Product key : keys) {
+			if (name.equals(key.getName())) {
+				return key;
+			}
+		}
+		return null;
 	}
 	
 	public int getCurrentPaidSum() {
 		return currentPaidSum;
 	}
-	
-	public Map<Wallet.Coin, Integer> giveChange(int sum) {
+
+	public Wallet giveChange(int sum) {
 		
-		Map<Wallet.Coin, Integer> coinsToReturn = new HashMap<>();
+		if (sum == 0) {
+			throw new IllegalArgumentException("There is nothing to return");
+		}
+		
+		int currentPaidSumCopy = getCurrentPaidSum();
+		this.clearCoinAcceptor();
+		
+		Wallet change = this.giveChange(sum, 0, new Wallet(wallet));
+		
+		if (change == null) {
+			currentPaidSum = currentPaidSumCopy;
+			throw new IllegalStateException(
+					"VM can't give you all the money at that momemnt for some reason.\nCall the administrator.");
+		}
+		
+		for (Map.Entry<Wallet.Coin, Integer> coin : change.getCoins().entrySet()) {
+			wallet.setCoins(coin.getKey(), wallet.getCoinsAmount(coin.getKey()) - coin.getValue());
+		}
+		
+		return change;
+	}
+
+	public Wallet giveChange(int sum, int offset, Wallet vmWallet) {
+		
 		Wallet.Coin[] values = Wallet.Coin.values();
 		
-		for (int i = values.length - 1; i >= 0; i--) { //reverse order
-		    
+		for (int i = values.length - 1 - offset; i >= 0; i--) { //reverse order
+		
 			Wallet.Coin coin = values[i];
-		    int amount = sum / coin.getValue();
-			if (amount != 0) {
-				sum -= amount * coin.getValue();
+			if (coin.getValue() > sum) {
+				continue;
+			} 
+			
+			Integer coinsAmount = vmWallet.getCoinsAmount(coin);
+			if (coinsAmount != null && coinsAmount > 0) {
 				
-				coinsToReturn.put(coin, amount);
+				Wallet coinsToReturn = new Wallet();
 				
-				int coinsLeftToReturn = amount;
-				int acceptorCoinsAmount = coinAcceptorWallet.getCoinsAmount(coin);
+				Wallet vmWalletCopy = new Wallet(vmWallet); //we have to create copy of the wallet, so we can return 
+				vmWalletCopy.spendCoin(coin);				//to this state in case of failure with some combination
 				
-				if (coinsLeftToReturn - acceptorCoinsAmount > 0) { //amount of coins of this denomination in acceptor is not enough
+				coinsToReturn.addCoin(coin);
+				
+				int sumLeftToReturn = sum - coin.getValue();
+				if (sumLeftToReturn == 0) {
+					return coinsToReturn;
+				}
+				
+				Wallet extraCoinsToReturn = giveChange(sumLeftToReturn, values.length - 1 - i, vmWalletCopy);
+				if (extraCoinsToReturn != null) {
+					for (Map.Entry<Wallet.Coin, Integer> c : extraCoinsToReturn.getCoins().entrySet()) {
+						coinsToReturn.addCoins(c.getKey(), c.getValue());
+					}
 					
-					wallet.setCoins(coin, wallet.getCoinsAmount(coin) - coinsLeftToReturn);
-					
-				} else {
-					coinAcceptorWallet.setCoins(coin, acceptorCoinsAmount - coinsLeftToReturn);
+					return coinsToReturn;
 				}
 			}
 		}
-		
-		clearCoinAcceptor();
-		
-		return coinsToReturn;
+		return null;
 	}
-
+	
 	private void clearCoinAcceptor() {
-		
-		for(Map.Entry<Wallet.Coin, Integer> coin : coinAcceptorWallet.getCoins().entrySet()) {
-		    
-		    wallet.addCoins(coin.getKey(), coin.getValue());
-		    coinAcceptorWallet.setCoins(coin.getKey(), 0);
+
+		for (Map.Entry<Wallet.Coin, Integer> coin : coinAcceptorWallet.getCoins().entrySet()) {
+
+			wallet.addCoins(coin.getKey(), coin.getValue());
+			coinAcceptorWallet.setCoins(coin.getKey(), 0);
 		}
 		currentPaidSum = 0;
 	}
@@ -120,25 +151,25 @@ public class VM implements HasMoney {
 			throw new IllegalArgumentException("Insufficient funds");
 		}
 		
-		
 		int sum = 0;
 		
-		for(Map.Entry<Wallet.Coin, Integer> coin : coinAcceptorWallet.getCoins().entrySet()) { //normal order - take coins with less denomination first
-		    
-			int denom = coin.getKey().getValue();
-			int coinsAmount = coin.getValue();
+		Wallet.Coin[] values = Wallet.Coin.values();
+		
+		for (int i = values.length - 1; i >= 0; i--) { //reverse order
 			
-			if (coinsAmount == 0) {
+			Wallet.Coin coin = values[i];
+			Integer coinAcceptorCoinsAmount = coinAcceptorWallet.getCoinsAmount(coin);
+			if (!(coinAcceptorCoinsAmount > 0)) { // can be zero or null
 				continue;
 			}
 			
-			for (int i = 0; i < coinsAmount; i++ ) {
+			for (int j = 0; j < coinAcceptorCoinsAmount; j++) {
 				if (sum >= product.getPrice()) {
 					break;
 				}
-				sum += denom;
-				spendCoin(denom);
-				wallet.addCoin(denom);
+				sum += coin.getValue();
+				coinAcceptorWallet.spendCoin(coin.getValue());
+				wallet.addCoin(coin.getValue());
 			}
 			
 			if (sum >= product.getPrice()) {
@@ -148,7 +179,6 @@ public class VM implements HasMoney {
 		
 		products.put(product, products.get(product) - 1);
 		currentPaidSum -= product.getPrice();
-		
 	}
 	
 	@Override

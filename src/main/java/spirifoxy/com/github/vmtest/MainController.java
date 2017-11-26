@@ -66,8 +66,12 @@ public class MainController {
 		
 		VM vm = Server.getInstance().getVM();
 
-		Map<Wallet.Coin, Integer> change = vm.giveChange(vm.getCurrentPaidSum());
-		user.getChange(change);
+		try {
+			Wallet change = vm.giveChange(vm.getCurrentPaidSum());
+			user.getChange(change);
+		} catch (Exception e) {
+			return "{ \"error\": \"" + e.getMessage() + "\"}";
+		}
 		
 		return "{ \"message\": \"OK\"}";
     }

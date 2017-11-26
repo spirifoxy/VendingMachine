@@ -36,22 +36,32 @@ public class Wallet {
 	}
 	
 	public void addCoins(Coin coin, int amount) {
-		coins.put(coin, coins.get(coin) + amount);
+		Integer coinsInWallet = this.getCoinsAmount(coin);
+		if (coinsInWallet == null) {
+			this.setCoins(coin, amount);
+		} else {
+			coins.put(coin, coinsInWallet.intValue() + amount);
+		}
 	}
 	
 	public void spendCoin(Coin coin) {
-		if (getCoinsAmount(coin) == 0) {
+		Integer coinsInWallet = this.getCoinsAmount(coin);
+		if (coinsInWallet.intValue() == 0 || coinsInWallet == null) {
 			throw new IllegalArgumentException("There are no coins of denomination " + coin.getValue() + " in the wallet");
 		}
-		coins.put(coin, coins.get(coin) - 1);
+		coins.put(coin, coinsInWallet.intValue() - 1);
 	}
 	
-	public int getCoinsAmount(Coin coin) {
+	public Integer getCoinsAmount(Coin coin) {
 		return coins.get(coin);
 	}
 	
 	public Wallet() {
 		this.coins = new LinkedHashMap<Coin, Integer>();
+	}
+	
+	public Wallet(Wallet wallet) {
+		this.coins = new LinkedHashMap<Coin, Integer>(wallet.coins);
 	}
 	
 	public Map<Coin, Integer> getCoins() {

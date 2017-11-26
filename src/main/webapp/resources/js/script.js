@@ -41,7 +41,7 @@ $(function() {
 	        	
 	        } else {
 	        	
-	        	alert("Error: unknown");
+	        	alert("Error: " + data.error );s
 	        	
 	        }
 	    });

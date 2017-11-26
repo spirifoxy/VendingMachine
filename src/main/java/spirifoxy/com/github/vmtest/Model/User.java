@@ -25,8 +25,8 @@ public class User implements HasMoney {
 		return wallet;
 	}
 
-	public void getChange(Map<Wallet.Coin, Integer> change) {
-		for(Map.Entry<Wallet.Coin, Integer> coin : change.entrySet()) {
+	public void getChange(Wallet change) {
+		for(Map.Entry<Wallet.Coin, Integer> coin : change.getCoins().entrySet()) {
 		    
 		    wallet.addCoins(coin.getKey(), coin.getValue());
 		}
